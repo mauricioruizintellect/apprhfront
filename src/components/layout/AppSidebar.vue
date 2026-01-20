@@ -233,19 +233,13 @@ import {
 } from "../../icons";
 import BoxCubeIcon from "@/icons/BoxCubeIcon.vue";
 import { useSidebar } from "@/composables/useSidebar";
+import { useAuthStore } from "@/stores/auth";
 
 const route = useRoute();
 
 const { isExpanded, isMobileOpen, isHovered, openSubmenu } = useSidebar();
-let currentRole = null;
-const storedUser = sessionStorage.getItem("user");
-if (storedUser) {
-  try {
-    currentRole = JSON.parse(storedUser).role;
-  } catch (error) {
-    console.warn("No se pudo leer el rol del usuario:", error);
-  }
-}
+const authStore = useAuthStore();
+const currentRole = computed(() => authStore.user?.role ?? null);
 
 const menuGroups = [
   {
@@ -290,7 +284,7 @@ const visibleMenuGroups = computed(() => {
     .map((group) => ({
       ...group,
       items: group.items.filter(
-        (item) => !item.roles || item.roles.includes(currentRole)
+        (item) => !item.roles || item.roles.includes(currentRole.value)
       ),
     }))
     .filter((group) => group.items.length > 0);

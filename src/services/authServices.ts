@@ -1,5 +1,8 @@
 import axios, { AxiosError } from 'axios'
 import type { AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios'
+import { useAuthStore } from '@/stores/auth'
+import { pinia } from '@/stores'
+import { getAuthToken } from '@/services/authToken'
 
 // Extiende la configuración de Axios para permitir `_retry`
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
@@ -15,7 +18,7 @@ const api = axios.create({ baseURL: API_URL })
 
 // Interceptor para agregar el Access Token en cada solicitud
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const token = sessionStorage.getItem('accessToken')
+  const token = getAuthToken()
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`
   }
@@ -39,24 +42,11 @@ api.interceptors.response.use(
       return api(originalRequest)
     }
 
-    // Caso 401 → intentar refrescar el token
+    // Caso 401 → cerrar sesion y redirigir
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
-      try {
-        const refreshToken = sessionStorage.getItem('refreshToken')
-        const { data } = await axios.post<{ accessToken: string }>(
-          `${API_URL}/refresh-token`,
-          { refreshToken }
-        )
-        sessionStorage.setItem('accessToken', data.accessToken)
-        if (originalRequest.headers) {
-          originalRequest.headers.Authorization = `Bearer ${data.accessToken}`
-        }
-        return api(originalRequest)
-      } catch (refreshError) {
-        sessionStorage.clear()
-        window.location.href = '/'
-      }
+      const authStore = useAuthStore(pinia)
+      authStore.logout()
     }
 
     return Promise.reject(error)

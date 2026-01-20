@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import { pinia } from '@/stores'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,6 +14,7 @@ const router = createRouter({
       component: () => import('../views/Others/UserProfile.vue'),
       meta: {
         title: 'Profile',
+        requiresAuth: true,
       },
     },
     {
@@ -20,6 +23,7 @@ const router = createRouter({
       component: () => import('../views/Forms/FormElements.vue'),
       meta: {
         title: 'Form Elements',
+        requiresAuth: true,
       },
     },
     {
@@ -28,17 +32,26 @@ const router = createRouter({
       component: () => import('../views/Tables/BasicTables.vue'),
       meta: {
         title: 'Basic Tables',
+        requiresAuth: true,
       },
     },
     {
       path: '/line-chart',
       name: 'Line Chart',
       component: () => import('../views/Chart/LineChart/LineChart.vue'),
+      meta: {
+        title: 'Line Chart',
+        requiresAuth: true,
+      },
     },
     {
       path: '/bar-chart',
       name: 'Bar Chart',
       component: () => import('../views/Chart/BarChart/BarChart.vue'),
+      meta: {
+        title: 'Bar Chart',
+        requiresAuth: true,
+      },
     },
     {
       path: '/alerts',
@@ -46,6 +59,7 @@ const router = createRouter({
       component: () => import('../views/UiElements/Alerts.vue'),
       meta: {
         title: 'Alerts',
+        requiresAuth: true,
       },
     },
     {
@@ -54,6 +68,7 @@ const router = createRouter({
       component: () => import('../views/UiElements/Avatars.vue'),
       meta: {
         title: 'Avatars',
+        requiresAuth: true,
       },
     },
     {
@@ -62,6 +77,7 @@ const router = createRouter({
       component: () => import('../views/UiElements/Badges.vue'),
       meta: {
         title: 'Badge',
+        requiresAuth: true,
       },
     },
 
@@ -71,6 +87,7 @@ const router = createRouter({
       component: () => import('../views/UiElements/Buttons.vue'),
       meta: {
         title: 'Buttons',
+        requiresAuth: true,
       },
     },
 
@@ -80,6 +97,7 @@ const router = createRouter({
       component: () => import('../views/UiElements/Images.vue'),
       meta: {
         title: 'Images',
+        requiresAuth: true,
       },
     },
     {
@@ -88,6 +106,7 @@ const router = createRouter({
       component: () => import('../views/UiElements/Videos.vue'),
       meta: {
         title: 'Videos',
+        requiresAuth: true,
       },
     },
     {
@@ -96,6 +115,7 @@ const router = createRouter({
       component: () => import('../views/Pages/BlankPage.vue'),
       meta: {
         title: 'Blank',
+        requiresAuth: true,
       },
     },
 
@@ -105,6 +125,7 @@ const router = createRouter({
       component: () => import('../views/Errors/FourZeroFour.vue'),
       meta: {
         title: '404 Error',
+        requiresAuth: true,
       },
     },
     {
@@ -113,6 +134,8 @@ const router = createRouter({
       component: () => import('../views/Admin/AdminDashboard.vue'),
       meta: {
         title: 'Administración',
+        requiresAuth: true,
+        requiresAdmin: true,
       },
     },
     {
@@ -121,6 +144,7 @@ const router = createRouter({
       component: () => import('../views/Internal/InternalDashboard.vue'),
       meta: {
         title: 'Portal Interno',
+        requiresAuth: true,
       },
     },
     {
@@ -129,6 +153,8 @@ const router = createRouter({
       component: () => import('../views/Internal/ConsultantsPage.vue'),
       meta: {
         title: 'Consultores',
+        requiresAuth: true,
+        requiresAdmin: true,
       },
     },
     {
@@ -137,6 +163,7 @@ const router = createRouter({
       component: () => import('../views/Internal/VacationsPage.vue'),
       meta: {
         title: 'Solicitud Vacaciones',
+        requiresAuth: true,
       },
     },
     {
@@ -145,6 +172,7 @@ const router = createRouter({
       component: () => import('../views/Internal/OvertimePage.vue'),
       meta: {
         title: 'Horas Extras',
+        requiresAuth: true,
       },
     },
     {
@@ -153,6 +181,7 @@ const router = createRouter({
       component: () => import('../views/Internal/EvaluationsPage.vue'),
       meta: {
         title: 'Evaluaciones',
+        requiresAuth: true,
       },
     },
 
@@ -160,8 +189,10 @@ const router = createRouter({
       path: '/',
       name: 'Signin',
       component: () => import('../views/Auth/Signin.vue'),
+      alias: '/login',
       meta: {
         title: 'Signin',
+        requiresAuth: false,
       },
     },
     {
@@ -170,6 +201,7 @@ const router = createRouter({
       component: () => import('../views/Auth/Signup.vue'),
       meta: {
         title: 'Signup',
+        requiresAuth: true,
       },
     },
   ],
@@ -180,25 +212,14 @@ export default router
 router.beforeEach((to, from, next) => {
   document.title = `StaffManager - ${to.meta.title}`
 
-  const storedUser = sessionStorage.getItem('user')
-  let role = null
-  if (storedUser) {
-    try {
-      role = JSON.parse(storedUser).role
-    } catch (error) {
-      console.warn('No se pudo leer el rol del usuario:', error)
-    }
-  }
+  const authStore = useAuthStore(pinia)
 
-  const isSignin = to.path === '/'
-  const accessToken = sessionStorage.getItem('accessToken')
-
-  if (!isSignin && !accessToken) {
-    next('/')
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    next('/login')
     return
   }
 
-  if (to.path === '/consultores' && role === 'consultor') {
+  if (to.meta.requiresAdmin && authStore.user?.role !== 'admin') {
     next('/portal')
     return
   }

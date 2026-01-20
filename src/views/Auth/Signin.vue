@@ -195,8 +195,10 @@ import { useRouter } from 'vue-router'
 import api from '@/services/authServices'
 import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
 import CommonGridShape from '@/components/common/CommonGridShape.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
 const userAuth = reactive({
   email: '',
@@ -214,10 +216,10 @@ const login = async () => {
     })
     const { accessToken, refreshToken, user } = response.data
 
-    if (accessToken && refreshToken) {
-      sessionStorage.setItem('accessToken', accessToken)
-      sessionStorage.setItem('refreshToken', refreshToken)
-      sessionStorage.setItem('user', JSON.stringify(user))
+    if (accessToken) {
+      authStore.setToken(accessToken)
+      authStore.setRefreshToken(refreshToken || null)
+      authStore.setUser(user)
 
       // redirección según rol
       if (user.role === 'admin') {

@@ -25,14 +25,9 @@
 
 <script setup lang="ts">
 import AdminLayout from '@/components/layout/AdminLayout.vue'
+import { computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 
-let isAdmin = false
-const storedUser = sessionStorage.getItem('user')
-if (storedUser) {
-  try {
-    isAdmin = JSON.parse(storedUser).role === 'admin'
-  } catch (error) {
-    console.warn('No se pudo leer el rol del usuario:', error)
-  }
-}
+const authStore = useAuthStore()
+const isAdmin = computed(() => authStore.user?.role === 'admin')
 </script>
