@@ -1,5 +1,5 @@
 <template>
-  <AdminLayout>
+  <DefaultLayout>
     <div class="space-y-4">
       <div>
         <h1 class="text-2xl font-semibold text-gray-800 dark:text-white/90">
@@ -15,9 +15,9 @@
         Aqui se mostraran los formularios y el historial de solicitudes.
       </div>
     </div>
-  </AdminLayout>
+  </DefaultLayout>
 </template>
 
 <script setup lang="ts">
-import AdminLayout from '@/components/layout/AdminLayout.vue'
+import DefaultLayout from '@/components/layout/DefaultLayout.vue'
 </script>

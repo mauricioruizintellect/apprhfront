@@ -1,5 +1,5 @@
 <template>
-  <AdminLayout>
+  <DefaultLayout>
     <div class="space-y-4">
       <div>
         <h1 class="text-2xl font-semibold text-gray-800 dark:text-white/90">Inicio</h1>
@@ -20,11 +20,11 @@
         Espacio reservado para tareas personales, solicitudes y resumen de actividades.
       </div>
     </div>
-  </AdminLayout>
+  </DefaultLayout>
 </template>
 
 <script setup lang="ts">
-import AdminLayout from '@/components/layout/AdminLayout.vue'
+import DefaultLayout from '@/components/layout/DefaultLayout.vue'
 import { computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 
