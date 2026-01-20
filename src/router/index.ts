@@ -195,15 +195,6 @@ const router = createRouter({
         requiresAuth: false,
       },
     },
-    {
-      path: '/signup',
-      name: 'Signup',
-      component: () => import('../views/Auth/Signup.vue'),
-      meta: {
-        title: 'Signup',
-        requiresAuth: true,
-      },
-    },
   ],
 })
 
@@ -216,6 +207,15 @@ router.beforeEach((to, from, next) => {
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/login')
+    return
+  }
+
+  if (!to.meta.requiresAuth && authStore.isAuthenticated) {
+    if (authStore.user?.role === 'admin') {
+      next('/admin')
+      return
+    }
+    next('/portal')
     return
   }
 
