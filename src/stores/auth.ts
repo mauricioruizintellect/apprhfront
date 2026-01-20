@@ -1,4 +1,6 @@
 import { defineStore } from 'pinia'
+import axios from 'axios'
+import { API_URL } from '@/services/apiConfig'
 
 type AuthUser = {
   role?: string
@@ -58,9 +60,20 @@ export const useAuthStore = defineStore('auth', {
       localStorage.removeItem('refreshToken')
       localStorage.removeItem('user')
     },
-    logout() {
-      this.clearAuth()
-      window.location.href = '/login'
+    async logout() {
+      try {
+        if (this.refreshToken) {
+          await axios.post(`${API_URL}/logout`, {
+            refreshToken: this.refreshToken,
+          })
+        }
+      } catch (error) {
+        console.error('Error al cerrar sesion:', error)
+      } finally {
+        this.clearAuth()
+        const { default: router } = await import('@/router')
+        router.push('/login')
+      }
     },
   },
 })

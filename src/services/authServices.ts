@@ -3,16 +3,12 @@ import type { AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios'
 import { useAuthStore } from '@/stores/auth'
 import { pinia } from '@/stores'
 import { getAuthToken } from '@/services/authToken'
+import { API_URL } from '@/services/apiConfig'
 
 // Extiende la configuración de Axios para permitir `_retry`
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   _retry?: boolean
 }
-
-const isProduction = window.location.href.includes('intellectsystem')
-const API_URL = isProduction
-  ? 'https://work.intellectsystem.net/api'
-  : 'https://work.intellectsystem.net/api'
 
 const api = axios.create({ baseURL: API_URL })
 
