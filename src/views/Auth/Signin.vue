@@ -19,41 +19,41 @@
               </div>
               <div>
 
-                <form @submit.prevent="handleSubmit">
-                  <div class="space-y-5">
-                    <!-- Email -->
-                    <div>
+                <form @submit.prevent="login">
+                <div class="space-y-5">
+                  <!-- Email -->
+                  <div>
                       <label
                         for="email"
                         class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
                       >
-                        Email<span class="text-error-500">*</span>
-                      </label>
-                      <input
-                        v-model="email"
-                        type="email"
-                        id="email"
+                      Email<span class="text-error-500">*</span>
+                    </label>
+                    <input
+                        v-model="userAuth.email"
+                      type="email"
+                      id="email"
                         name="email"
-                        placeholder="info@gmail.com"
+                      placeholder="info@gmail.com"
                         class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                      />
-                    </div>
-                    <!-- Password -->
-                    <div>
+                    />
+                  </div>
+                  <!-- Password -->
+                  <div>
                       <label
                         for="Contraseña"
                         class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
                       >
-                        Contraseña<span class="text-error-500">*</span>
-                      </label>
+                      Contraseña<span class="text-error-500">*</span>
+                    </label>
                       <div class="relative">
-                        <input
-                          v-model="password"
-                          :type="showPassword ? 'text' : 'password'"
-                          id="password"
+                    <input
+                          v-model="userAuth.password"
+                      :type="showPassword ? 'text' : 'password'"
+                      id="password"
                           placeholder="Enter your password"
                           class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-4 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                        />
+                    />
                         <span
                           @click="togglePasswordVisibility"
                           class="absolute z-30 text-gray-500 -translate-y-1/2 cursor-pointer right-4 top-1/2 dark:text-gray-400"
@@ -91,7 +91,7 @@
                             />
                           </svg>
                         </span>
-                      </div>
+                  </div>
                     </div>
                     <!-- Checkbox -->
                     <div class="flex items-center justify-between">
@@ -102,21 +102,27 @@
                       >
                     </div>
                     <!-- Button -->
-                    <div>
-                      <button
-                        type="submit"
+                  <div>
+                    <button
+                      type="submit"
                         class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
-                      >
-                        Sign In
-                      </button>
-                    </div>
+                    >
+                      Ingresar
+                    </button>
                   </div>
-                </form>
-                <div class="relative py-3 sm:py-5">
-                  <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t border-gray-200 dark:border-gray-800"></div>
-                  </div>
-                  <div class="relative flex justify-center text-sm">
+                  <!-- Errores -->
+                  <p v-if="userAuth.error" class="text-sm text-red-500 text-center">
+                    {{ userAuth.error }}
+                  </p>
+                </div>
+              </form>
+
+              <!-- Separador -->
+              <div class="relative py-3 sm:py-5">
+                <div class="absolute inset-0 flex items-center">
+                  <div class="w-full border-t border-gray-200 dark:border-gray-800"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
                     <span class="p-2 text-gray-400 bg-white dark:bg-gray-900 sm:px-5 sm:py-2"
                       >O</span
                     >
@@ -154,6 +160,12 @@
                   </button>
                 </div>
               </div>
+
+              <!-- Google Sign In -->
+              <div class="grid grid-cols-1 gap-3">
+                <div id="googleSignInButton"></div>
+              </div>
+
             </div>
           </div>
         </div>
@@ -178,24 +190,51 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import CommonGridShape from '@/components/common/CommonGridShape.vue'
+import { reactive, ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import api from '@/services/authServices'
 import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
-const email = ref('')
-const password = ref('')
+import CommonGridShape from '@/components/common/CommonGridShape.vue'
+
+const router = useRouter()
+
+const userAuth = reactive({
+  email: '',
+  password: '',
+  error: null as string | null,
+})
+
 const showPassword = ref(false)
-const keepLoggedIn = ref(false)
+
+const login = async () => {
+  try {
+    const response = await api.post('/login', {
+      email: userAuth.email,
+      password: userAuth.password,
+    })
+    const { accessToken, refreshToken, user } = response.data
+
+    if (accessToken && refreshToken) {
+      sessionStorage.setItem('accessToken', accessToken)
+      sessionStorage.setItem('refreshToken', refreshToken)
+      sessionStorage.setItem('user', JSON.stringify(user))
+
+      // redirección según rol
+      if (user.role === 'admin') {
+        router.push('/admin')
+      } else {
+        router.push('/dashboard')
+      }
+    } else {
+      user.error = 'Autenticación fallida. Intenta nuevamente.'
+    }
+  } catch (error: any) {
+    console.error('Error al iniciar sesión:', error)
+    userAuth.error = error.response?.data?.message || 'Error al iniciar sesión.'
+  }
+}
 
 const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value
-}
-
-const handleSubmit = () => {
-  // Handle form submission
-  console.log('Form submitted', {
-    email: email.value,
-    password: password.value,
-    keepLoggedIn: keepLoggedIn.value,
-  })
 }
 </script>
