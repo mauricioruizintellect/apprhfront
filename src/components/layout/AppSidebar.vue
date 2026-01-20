@@ -50,7 +50,10 @@
     >
       <nav class="mb-6">
         <div class="flex flex-col gap-4">
-          <div v-for="(menuGroup, groupIndex) in menuGroups" :key="groupIndex">
+          <div
+            v-for="(menuGroup, groupIndex) in visibleMenuGroups"
+            :key="groupIndex"
+          >
             <h2
               :class="[
                 'mb-4 text-xs uppercase flex leading-[20px] text-gray-400',
@@ -216,7 +219,6 @@ import { useRoute } from "vue-router";
 
 import {
   GridIcon,
-  CalenderIcon,
   UserCircleIcon,
   ChatIcon,
   MailIcon,
@@ -231,11 +233,19 @@ import {
 } from "../../icons";
 import BoxCubeIcon from "@/icons/BoxCubeIcon.vue";
 import { useSidebar } from "@/composables/useSidebar";
-import Calendar2Line from "@/icons/Calendar2Line.vue";
 
 const route = useRoute();
 
 const { isExpanded, isMobileOpen, isHovered, openSubmenu } = useSidebar();
+let currentRole = null;
+const storedUser = sessionStorage.getItem("user");
+if (storedUser) {
+  try {
+    currentRole = JSON.parse(storedUser).role;
+  } catch (error) {
+    console.warn("No se pudo leer el rol del usuario:", error);
+  }
+}
 
 const menuGroups = [
   {
@@ -244,36 +254,47 @@ const menuGroups = [
       {
         icon: GridIcon,
         name: "Inicio",
-        path: "/",
+        path: "/portal",
+        roles: ["admin", "consultor"],
       },
       {
         icon: UserCircleIcon,
         name: "Consultores",
-        path: "/profile",
+        path: "/consultores",
+        roles: ["admin"],
       },
       {
         icon: PageIcon,
         name: "Solicitud Vacaciones",
-        path: "/profile",
+        path: "/vacaciones",
+        roles: ["admin", "consultor"],
       },
       {
         icon: ListIcon,
         name: "Horas Extras",
-        path: "/profile",
+        path: "/horas-extras",
+        roles: ["admin", "consultor"],
       },
       {
         icon: TableIcon,
         name: "Evaluaciones",
-        path: "/profile",
+        path: "/evaluaciones",
+        roles: ["admin", "consultor"],
       },
-      {
-        icon: CalenderIcon,
-        name: "Calendario",
-        path: "/calendar",
-      }
     ],
   }
 ];
+
+const visibleMenuGroups = computed(() => {
+  return menuGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter(
+        (item) => !item.roles || item.roles.includes(currentRole)
+      ),
+    }))
+    .filter((group) => group.items.length > 0);
+});
 
 const isActive = (path) => route.path === path;
 
@@ -283,7 +304,7 @@ const toggleSubmenu = (groupIndex, itemIndex) => {
 };
 
 const isAnySubmenuRouteActive = computed(() => {
-  return menuGroups.some((group) =>
+  return visibleMenuGroups.value.some((group) =>
     group.items.some(
       (item) =>
         item.subItems && item.subItems.some((subItem) => isActive(subItem.path))
@@ -296,9 +317,10 @@ const isSubmenuOpen = (groupIndex, itemIndex) => {
   return (
     openSubmenu.value === key ||
     (isAnySubmenuRouteActive.value &&
-      menuGroups[groupIndex].items[itemIndex].subItems?.some((subItem) =>
-        isActive(subItem.path)
-      ))
+      visibleMenuGroups.value[groupIndex].items[itemIndex].subItems?.some(
+        (subItem) => isActive(subItem.path)
+      )
+      )
   );
 };
 

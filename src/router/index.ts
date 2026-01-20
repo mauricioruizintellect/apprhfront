@@ -7,14 +7,6 @@ const router = createRouter({
   },
   routes: [
     {
-      path: '/calendar',
-      name: 'Calendar',
-      component: () => import('../views/Others/Calendar.vue'),
-      meta: {
-        title: 'Calendar',
-      },
-    },
-    {
       path: '/profile',
       name: 'Profile',
       component: () => import('../views/Others/UserProfile.vue'),
@@ -128,7 +120,39 @@ const router = createRouter({
       name: 'Internal portal',
       component: () => import('../views/Internal/InternalDashboard.vue'),
       meta: {
-        title: 'POrtal Interno',
+        title: 'Portal Interno',
+      },
+    },
+    {
+      path: '/consultores',
+      name: 'Consultores',
+      component: () => import('../views/Internal/ConsultantsPage.vue'),
+      meta: {
+        title: 'Consultores',
+      },
+    },
+    {
+      path: '/vacaciones',
+      name: 'Solicitud Vacaciones',
+      component: () => import('../views/Internal/VacationsPage.vue'),
+      meta: {
+        title: 'Solicitud Vacaciones',
+      },
+    },
+    {
+      path: '/horas-extras',
+      name: 'Horas Extras',
+      component: () => import('../views/Internal/OvertimePage.vue'),
+      meta: {
+        title: 'Horas Extras',
+      },
+    },
+    {
+      path: '/evaluaciones',
+      name: 'Evaluaciones',
+      component: () => import('../views/Internal/EvaluationsPage.vue'),
+      meta: {
+        title: 'Evaluaciones',
       },
     },
 
@@ -155,5 +179,29 @@ export default router
 
 router.beforeEach((to, from, next) => {
   document.title = `StaffManager - ${to.meta.title}`
+
+  const storedUser = sessionStorage.getItem('user')
+  let role = null
+  if (storedUser) {
+    try {
+      role = JSON.parse(storedUser).role
+    } catch (error) {
+      console.warn('No se pudo leer el rol del usuario:', error)
+    }
+  }
+
+  const isSignin = to.path === '/'
+  const accessToken = sessionStorage.getItem('accessToken')
+
+  if (!isSignin && !accessToken) {
+    next('/')
+    return
+  }
+
+  if (to.path === '/consultores' && role === 'consultor') {
+    next('/portal')
+    return
+  }
+
   next()
 })
