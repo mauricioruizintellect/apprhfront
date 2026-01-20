@@ -115,6 +115,22 @@ const router = createRouter({
         title: '404 Error',
       },
     },
+    {
+      path: '/admin',
+      name: 'Admin Dashboard',
+      component: () => import('../views/Admin/AdminDashboard.vue'),
+      meta: {
+        title: 'Administración',
+      },
+    },
+    {
+      path: '/portal',
+      name: 'Internal portal',
+      component: () => import('../views/Internal/InternalDashboard.vue'),
+      meta: {
+        title: 'POrtal Interno',
+      },
+    },
 
     {
       path: '/',
@@ -138,6 +154,6 @@ const router = createRouter({
 export default router
 
 router.beforeEach((to, from, next) => {
-  document.title = `Vue.js ${to.meta.title} | TailAdmin - Vue.js Tailwind CSS Dashboard Template`
+  document.title = `StaffManager - ${to.meta.title}`
   next()
 })
