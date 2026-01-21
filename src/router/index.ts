@@ -129,6 +129,15 @@ const router = createRouter({
       },
     },
     {
+      path: '/unauthorized',
+      name: 'Unauthorized',
+      component: () => import('../views/Errors/FourZeroFour.vue'),
+      meta: {
+        title: 'Unauthorized',
+        requiresAuth: false,
+      },
+    },
+    {
       path: '/admin',
       name: 'Admin Dashboard',
       component: () => import('../views/Admin/AdminDashboard.vue'),
@@ -181,6 +190,24 @@ const router = createRouter({
       component: () => import('../views/Internal/EvaluationsPage.vue'),
       meta: {
         title: 'Evaluaciones',
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/empleado/editar/:id',
+      name: 'Editar empleado',
+      component: () => import('../views/Internal/EditEmployee.vue'),
+      meta: {
+        title: 'Editar empleado',
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/empleado/crear',
+      name: 'Crear empleado',
+      component: () => import('../views/Internal/NewEmployee.vue'),
+      meta: {
+        title: 'Crear empleado',
         requiresAuth: true,
       },
     },
