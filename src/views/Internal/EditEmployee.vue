@@ -26,6 +26,7 @@ const loadEmployee = async () => {
     const response = await api.get(`/employees/view/${employeeId}`, {
       headers: { 'Cache-Control': 'no-cache' },
     })
+    console.log(response.data);
     initialEmployee.value = response.data?.employee ?? null
   } catch (error) {
     console.error('Error al cargar empleado:', error)

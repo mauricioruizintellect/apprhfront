@@ -48,7 +48,15 @@
         :mode="mode"
         :countries="countries"
         :roles-list="rolesList"
-        @valid-change="handleValidChange"
+        @valid-change="(value) => handleValidChange(0, value)"
+      />
+      <EmployeeStepCertifications
+        v-else-if="currentStep === 1"
+        ref="certificationsStepRef"
+        v-model="formModel"
+        :certification-options="resolvedCertificationOptions"
+        :issuers="issuers"
+        @valid-change="(value) => handleValidChange(1, value)"
       />
     </div>
 
@@ -98,14 +106,18 @@ import { computed, onMounted, reactive, ref, watch } from 'vue'
 import type { EmployeeDTO, EmployeeFormModel } from '@/types/employee'
 import { mapDtoToForm, mapFormToPayload } from '@/utils/employeeMapper'
 import EmployeeStepPersonal from '@/components/employeeForm/steps/EmployeeStepPersonal.vue'
+import EmployeeStepCertifications from '@/components/employeeForm/steps/EmployeeStepCertifications.vue'
 import api from '@/services/authServices'
 
 type CountryOption = { Id: string; CountryName: string }
 type RoleOption = { Id: string; RoleName: string }
+type CertificationOption = { Id: string; Issuer: string; CertName: string }
+type IssuerOption = { Id: string; IssuerName: string; IssuerType?: string }
 
 const props = defineProps<{
   mode: 'create' | 'edit'
   initialEmployee?: EmployeeDTO | null
+  certificationOptions?: CertificationOption[]
 }>()
 
 const emit = defineEmits<{
@@ -114,10 +126,12 @@ const emit = defineEmits<{
   (event: 'step-change', stepIndex: number): void
 }>()
 
-const steps = [{ title: 'Informacion Personal' }]
+const steps = [{ title: 'Informacion Personal' }, { title: 'Certificaciones' }]
 
 const countries = ref<CountryOption[]>([])
 const rolesList = ref<RoleOption[]>([])
+const catalogCertificationOptions = ref<CertificationOption[]>([])
+const issuers = ref<IssuerOption[]>([])
 const isCatalogLoading = ref(false)
 
 const formModel = reactive<EmployeeFormModel>({
@@ -144,6 +158,7 @@ const formModel = reactive<EmployeeFormModel>({
   professionalExperienceYears: '',
   salesforceExperienceYears: '',
   rolesPerformed: [],
+  certifications: [],
   description: '',
   allergies: '',
   preExistingIllnesses: '',
@@ -157,17 +172,29 @@ const formModel = reactive<EmployeeFormModel>({
 })
 
 const currentStep = ref(0)
-const isCurrentStepValid = ref(false)
+const stepValidStates = ref(steps.map(() => true))
 const personalStepRef = ref<{ validate: (showErrors?: boolean) => boolean } | null>(null)
+const certificationsStepRef = ref<{ validate: (showErrors?: boolean) => boolean } | null>(null)
 
 const isLastStep = computed(() => currentStep.value === steps.length - 1)
+const isCurrentStepValid = computed(
+  () => stepValidStates.value[currentStep.value] ?? true
+)
+const resolvedCertificationOptions = computed(() => {
+  return props.certificationOptions?.length
+    ? props.certificationOptions
+    : catalogCertificationOptions.value
+})
 
-const handleValidChange = (value: boolean) => {
-  isCurrentStepValid.value = value
+const handleValidChange = (stepIndex: number, value: boolean) => {
+  stepValidStates.value[stepIndex] = value
 }
 
 const goNext = () => {
-  if (!personalStepRef.value?.validate()) return
+  const isValid = currentStep.value === 0
+    ? personalStepRef.value?.validate()
+    : certificationsStepRef.value?.validate()
+  if (!isValid) return
   currentStep.value += 1
   emit('step-change', currentStep.value)
 }
@@ -179,7 +206,10 @@ const goBack = () => {
 }
 
 const handleSubmit = () => {
-  if (!personalStepRef.value?.validate()) return
+  const isValid = currentStep.value === 0
+    ? personalStepRef.value?.validate()
+    : certificationsStepRef.value?.validate()
+  if (!isValid) return
   const payload = mapFormToPayload(formModel, props.mode)
   emit('submit', payload)
 }
@@ -193,6 +223,19 @@ const loadCatalogs = async () => {
     const catalogs = response.data.catalogs ?? {}
     countries.value = catalogs.countries ?? []
     rolesList.value = catalogs.roles ?? []
+    issuers.value = catalogs.issuers ?? []
+    const rawCertifications = catalogs.certifications ?? catalogs.certificationOptions ?? []
+    catalogCertificationOptions.value = rawCertifications
+      .map((certification: Record<string, any>) => ({
+        Id: certification.Id ?? certification.id ?? '',
+        Issuer: certification.Issuer ?? certification.IssuerName ?? certification.issuer ?? '',
+        CertName:
+          certification.CertName ??
+          certification.CertificationName ??
+          certification.certName ??
+          '',
+      }))
+      .filter((certification: CertificationOption) => certification.Id && certification.Issuer)
   } catch (error) {
     console.error('Error al cargar catalogos:', error)
   } finally {

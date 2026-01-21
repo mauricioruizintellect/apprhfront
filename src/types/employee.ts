@@ -22,6 +22,7 @@ export interface EmployeeDTO {
   professionalExperienceYears?: number | string
   salesforceExperienceYears?: number | string
   rolesPerformed?: string[] | string
+  certifications?: EmployeeCertificationDTO[]
   description?: string
   allergies?: string
   preExistingIllnesses?: string
@@ -39,6 +40,13 @@ export interface EmployeeDTO {
   CountryOfBirthId?: string
   CountryOfResidenceId?: string
   DateOfBirth?: string
+}
+
+export interface EmployeeCertificationDTO {
+  id?: string | number
+  issuer?: string
+  certId?: string
+  name?: string
 }
 
 export interface EmployeeFormModel {
@@ -65,6 +73,7 @@ export interface EmployeeFormModel {
   professionalExperienceYears: string
   salesforceExperienceYears: string
   rolesPerformed: string[]
+  certifications: EmployeeCertificationFormModel[]
   description: string
   allergies: string
   preExistingIllnesses: string
@@ -75,4 +84,11 @@ export interface EmployeeFormModel {
   emergencyContactRelationship: string
   inProject: boolean
   status: boolean
+}
+
+export interface EmployeeCertificationFormModel {
+  id?: string | number
+  issuer?: string
+  certId?: string
+  name?: string
 }

@@ -1,4 +1,9 @@
-import type { EmployeeDTO, EmployeeFormModel } from '@/types/employee'
+import type {
+  EmployeeCertificationDTO,
+  EmployeeCertificationFormModel,
+  EmployeeDTO,
+  EmployeeFormModel,
+} from '@/types/employee'
 
 const toDateInput = (value?: string) => {
   if (!value) return ''
@@ -19,6 +24,17 @@ const normalizeRoles = (value?: string[] | string) => {
     return value.split(';').map((item) => item.trim()).filter(Boolean)
   }
   return []
+}
+
+const mapCertificationDto = (
+  certification: EmployeeCertificationDTO
+): EmployeeCertificationFormModel => {
+  return {
+    id: certification.id,
+    issuer: certification.issuer || '',
+    name: certification.name || '',
+    certId: certification.certId || '',
+  }
 }
 
 export const mapDtoToForm = (dto: EmployeeDTO): EmployeeFormModel => {
@@ -46,6 +62,9 @@ export const mapDtoToForm = (dto: EmployeeDTO): EmployeeFormModel => {
     professionalExperienceYears: String(dto.professionalExperienceYears ?? ''),
     salesforceExperienceYears: String(dto.salesforceExperienceYears ?? ''),
     rolesPerformed: normalizeRoles(dto.rolesPerformed),
+    certifications: Array.isArray(dto.certifications)
+      ? dto.certifications.map(mapCertificationDto)
+      : [],
     description: dto.description || '',
     allergies: dto.allergies || '',
     preExistingIllnesses: dto.preExistingIllnesses || '',
@@ -83,6 +102,16 @@ export const mapFormToPayload = (form: EmployeeFormModel, mode: 'create' | 'edit
     professionalExperienceYears: form.professionalExperienceYears,
     salesforceExperienceYears: form.salesforceExperienceYears,
     rolesPerformed: form.rolesPerformed,
+    certifications: form.certifications.map((certification) => ({
+      id: certification.id,
+      issuerId: certification.issuerId,
+      issuerName: certification.issuerName,
+      certId: certification.certId,
+      certName: certification.certName,
+      obtainedAt: certification.obtainedAt,
+      expiresAt: certification.expiresAt,
+      link: certification.link,
+    })),
     description: form.description.trim(),
     allergies: form.allergies.trim(),
     preExistingIllnesses: form.preExistingIllnesses.trim(),
