@@ -35,11 +35,19 @@
     </div>
 
     <div class="mt-6">
+      <div
+        v-if="isCatalogLoading"
+        class="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-6 text-sm text-gray-500 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400"
+      >
+        Cargando catalogos...
+      </div>
       <EmployeeStepPersonal
-        v-if="currentStep === 0"
+        v-else-if="currentStep === 0"
         ref="personalStepRef"
         v-model="formModel"
         :mode="mode"
+        :countries="countries"
+        :roles-list="rolesList"
         @valid-change="handleValidChange"
       />
     </div>
@@ -86,10 +94,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import type { EmployeeDTO, EmployeeFormModel } from '@/types/employee'
 import { mapDtoToForm, mapFormToPayload } from '@/utils/employeeMapper'
 import EmployeeStepPersonal from '@/components/employeeForm/steps/EmployeeStepPersonal.vue'
+import api from '@/services/authServices'
+
+type CountryOption = { Id: string; CountryName: string }
+type RoleOption = { Id: string; RoleName: string }
 
 const props = defineProps<{
   mode: 'create' | 'edit'
@@ -103,6 +115,10 @@ const emit = defineEmits<{
 }>()
 
 const steps = [{ title: 'Informacion Personal' }]
+
+const countries = ref<CountryOption[]>([])
+const rolesList = ref<RoleOption[]>([])
+const isCatalogLoading = ref(false)
 
 const formModel = reactive<EmployeeFormModel>({
   id: undefined,
@@ -167,6 +183,26 @@ const handleSubmit = () => {
   const payload = mapFormToPayload(formModel, props.mode)
   emit('submit', payload)
 }
+
+const loadCatalogs = async () => {
+  try {
+    isCatalogLoading.value = true
+    const response = await api.get('/catalogs', {
+      headers: { 'Cache-Control': 'no-cache' },
+    })
+    const catalogs = response.data.catalogs ?? {}
+    countries.value = catalogs.countries ?? []
+    rolesList.value = catalogs.roles ?? []
+  } catch (error) {
+    console.error('Error al cargar catalogos:', error)
+  } finally {
+    isCatalogLoading.value = false
+  }
+}
+
+onMounted(() => {
+  loadCatalogs()
+})
 
 watch(
   () => props.initialEmployee,
