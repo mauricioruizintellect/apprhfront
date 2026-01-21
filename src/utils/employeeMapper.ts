@@ -3,6 +3,8 @@ import type {
   EmployeeCertificationFormModel,
   EmployeeCloudDTO,
   EmployeeCloudFormModel,
+  EmployeeSkillDTO,
+  EmployeeSkillFormModel,
   EmployeeDTO,
   EmployeeFormModel,
 } from '@/types/employee'
@@ -35,7 +37,7 @@ const mapCertificationDto = (
     id: certification.id,
     issuer: certification.issuer || '',
     name: certification.name || '',
-    certId: certification.certId || '',
+    certId: certification.certId || ''
   }
 }
 
@@ -46,6 +48,16 @@ const mapCloudDto = (cloud: EmployeeCloudDTO): EmployeeCloudFormModel => {
     issuerName: cloud.issuerName || cloud.issuer || '',
     cloudId: cloud.cloudId || '',
     cloudName: cloud.cloudName || '',
+  }
+}
+
+const mapSkillDto = (skill: EmployeeSkillDTO): EmployeeSkillFormModel => {
+  return {
+    id: skill.id,
+    skillId: skill.skillId || skill.skill || '',
+    skillName: skill.skillName || '',
+    levelId: skill.levelId || skill.level || '',
+    levelName: skill.levelName || '',
   }
 }
 
@@ -78,6 +90,8 @@ export const mapDtoToForm = (dto: EmployeeDTO): EmployeeFormModel => {
       ? dto.certifications.map(mapCertificationDto)
       : [],
     clouds: Array.isArray(dto.clouds) ? dto.clouds.map(mapCloudDto) : [],
+    techSkills: Array.isArray(dto.techSkills) ? dto.techSkills.map(mapSkillDto) : [],
+    softSkills: Array.isArray(dto.softSkills) ? dto.softSkills.map(mapSkillDto) : [],
     description: dto.description || '',
     allergies: dto.allergies || '',
     preExistingIllnesses: dto.preExistingIllnesses || '',
@@ -131,6 +145,20 @@ export const mapFormToPayload = (form: EmployeeFormModel, mode: 'create' | 'edit
       issuerName: cloud.issuerName,
       cloudId: cloud.cloudId,
       cloudName: cloud.cloudName,
+    })),
+    techSkills: form.techSkills.map((skill) => ({
+      id: skill.id,
+      skillId: skill.skillId,
+      skillName: skill.skillName,
+      levelId: skill.levelId,
+      levelName: skill.levelName,
+    })),
+    softSkills: form.softSkills.map((skill) => ({
+      id: skill.id,
+      skillId: skill.skillId,
+      skillName: skill.skillName,
+      levelId: skill.levelId,
+      levelName: skill.levelName,
     })),
     description: form.description.trim(),
     allergies: form.allergies.trim(),

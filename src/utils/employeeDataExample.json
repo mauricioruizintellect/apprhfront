@@ -1,0 +1,269 @@
+{
+   "employee":{
+      "employeeId":200,
+      "firstName":"Boris Mauricio",
+      "lastName":"Ruiz Rocha",
+      "userName":"mauricio.ruiz",
+      "gender":"M",
+      "email":"mauricio.ruiz@intellectsystem.net",
+      "birthDate":"1992-01-15T00:00:00.000Z",
+      "dateEntry":"2018-10-17T00:00:00.000Z",
+      "countryOfBirth":"NI",
+      "CountryOfBirthName":"Nicaragua",
+      "countryOfResidence":"EC",
+      "CountryOfResidenceName":"Ecuador",
+      "mobilePhone":"+ 593 099 822 6123",
+      "description":"Desarrollo de requerimientos con Apex, LWC, Flows y OmniStudio; liderazgo de equipo técnico. Implementación de soluciones clave para el cliente y estandarización de buenas prácticas en el equipo.",
+      "professionalExperienceYears":10,
+      "salesforceExperienceYears":9,
+      "typeOfConsultant":"Contrato Fijo (Interno)",
+      "percentageAvailability":"Tiempo Completo",
+      "inProject":1,
+      "hasAmericanVisa":0,
+      "citizenshipCardNumber":"1760070548",
+      "passportNumber":"C02459323",
+      "physicalAddress":"Quito, Ecuador",
+      "allergies":"NA",
+      "preExistingIllnesses":"NA",
+      "dietaryRestrictions":"NA",
+      "bloodType":"O+",
+      "emergencyContactName":"Mauricio Ruiz",
+      "emergencyContactPhone":"+505 8641 - 7722",
+      "emergencyContactRelationship":"Padre",
+      "userId":1,
+      "status":"active",
+      "rolesPerformed":"Developer;Software Engineer;Technical Lead",
+      "certifications":[
+         {
+            "id":103,
+            "certId":16,
+            "name":"Salesforce Certified Data Architect",
+            "issuer":"Salesforce"
+         },
+         {
+            "id":104,
+            "certId":72,
+            "name":"Salesforce Certified Platform Administrator",
+            "issuer":"Salesforce"
+         },
+         {
+            "id":105,
+            "certId":13,
+            "name":"Salesforce Certified Platform App Builder",
+            "issuer":"Salesforce"
+         },
+         {
+            "id":107,
+            "certId":14,
+            "name":"Salesforce Certified Platform Developer I",
+            "issuer":"Salesforce"
+         }
+      ],
+      "clouds":[
+         {
+            "id":43,
+            "cloudId":7,
+            "cloudName":"Experience Cloud",
+            "issuer":"Salesforce"
+         },
+         {
+            "id":44,
+            "cloudId":8,
+            "cloudName":"Financial Services Cloud",
+            "issuer":"Salesforce"
+         },
+         {
+            "id":45,
+            "cloudId":18,
+            "cloudName":"Loyalty Cloud",
+            "issuer":"Salesforce"
+         },
+         {
+            "id":46,
+            "cloudId":2,
+            "cloudName":"Sales Cloud",
+            "issuer":"Salesforce"
+         },
+         {
+            "id":47,
+            "cloudId":1,
+            "cloudName":"Service Cloud",
+            "issuer":"Salesforce"
+         }
+      ],
+      "techSkills":[
+         {
+            "id":156,
+            "skill":17,
+            "skillName":"Apex Programming",
+            "levelName":"100%",
+            "level":10
+         },
+         {
+            "id":158,
+            "skill":31,
+            "skillName":"Git Version Control",
+            "levelName":"100%",
+            "level":10
+         },
+         {
+            "id":159,
+            "skill":19,
+            "skillName":"Aura Components",
+            "levelName":"100%",
+            "level":10
+         },
+         {
+            "id":160,
+            "skill":23,
+            "skillName":"Flows",
+            "levelName":"100%",
+            "level":10
+         },
+         {
+            "id":161,
+            "skill":49,
+            "skillName":"JavaScript",
+            "levelName":"90%",
+            "level":9
+         },
+         {
+            "id":162,
+            "skill":18,
+            "skillName":"Lightning Web Components (LWC)",
+            "levelName":"100%",
+            "level":10
+         },
+         {
+            "id":163,
+            "skill":25,
+            "skillName":"REST API Integration",
+            "levelName":"100%",
+            "level":10
+         }
+      ],
+      "softSkills":[
+         {
+            "id":157,
+            "skill":78,
+            "skillName":"Manejo del estrés",
+            "levelName":"80%",
+            "level":8
+         },
+         {
+            "id":164,
+            "skill":74,
+            "skillName":"Autonomía",
+            "levelName":"90%",
+            "level":9
+         },
+         {
+            "id":165,
+            "skill":75,
+            "skillName":"Capacidad de aprendizaje continuo",
+            "levelName":"100%",
+            "level":10
+         },
+         {
+            "id":166,
+            "skill":84,
+            "skillName":"Proactividad",
+            "levelName":"90%",
+            "level":9
+         }
+      ],
+      "experience":[
+         {
+            "id":71,
+            "role":3,
+            "years":"4",
+            "period":"Meses",
+            "description":"Desarrollo y continuación de integraciones de contratos con Platform Events y Mulesoft",
+            "client":"Vibra - Brasil",
+            "startDate":"2025-06-11T00:00:00.000Z",
+            "endDate":"2025-10-17T00:00:00.000Z"
+         },
+         {
+            "id":74,
+            "role":3,
+            "years":"4",
+            "period":"Meses",
+            "description":"Desarrollo con LWC para comunidad de clientes de Nissan, integraciones con sistemas externos para login, vehiculos y contratos.",
+            "client":"Nissan - México",
+            "startDate":"2024-11-19T00:00:00.000Z",
+            "endDate":"2025-04-04T00:00:00.000Z"
+         },
+         {
+            "id":75,
+            "role":17,
+            "years":"2",
+            "period":"Años",
+            "description":"Diseñé e implementé arquitecturas para el consumo eficiente de APIs REST, garantizando escalabilidad y seguridad en las integraciones.\n\nDesarrollé e implementé componentes avanzados en Aura y Lightning Web Components (LWC), optimizando la experiencia de usuario en Salesforce.\n\nCreé y desplegué un framework de gestión de Triggers en Salesforce, estandarizando procesos y mejorando la mantenibilidad del código.\n\nImplementé arquitecturas robustas en Apex, aplicando principios de separación de responsabilidades (SoC) para asegurar calidad y reutilización del código.\n\nColaboré en la implementación de CI/CD con Azure DevOps, facilitando despliegues automatizados y reduciendo tiempos de liberación.\n\nDesarrollé nuevas funcionalidades con OmniStudio, acelerando la entrega de soluciones orientadas al cliente.",
+            "client":"Bancolombia",
+            "startDate":"2022-06-16T00:00:00.000Z",
+            "endDate":"2024-11-16T00:00:00.000Z"
+         },
+         {
+            "id":76,
+            "role":3,
+            "years":"6",
+            "period":"Meses",
+            "description":"Implementación de Salesforce Loyalty Management Cloud para optimizar la gestión de programas de lealtad. \n\nConfiguración de reglas avanzadas para la acumulación de puntos en los programas de fidelización.\n\nPersonalización de la segmentación de clientes para campañas más efectivas.",
+            "client":"Total Play (Loyalty-Project) - México",
+            "startDate":"2022-05-30T00:00:00.000Z",
+            "endDate":"2022-12-23T00:00:00.000Z"
+         },
+         {
+            "id":77,
+            "role":3,
+            "years":"3",
+            "period":"Meses",
+            "description":"Implementación de procesos de órdenes y cotizaciones utilizando Salesforce Manufacturing Cloud, mejorando la gestión de operaciones.\n\nDesarrollo de componentes personalizados en Lightning Web Components (LWC), Apex y Triggers para mejorar la funcionalidad del sistema.",
+            "client":"Envases Universales - México",
+            "startDate":"2022-01-04T00:00:00.000Z",
+            "endDate":"2022-04-21T00:00:00.000Z"
+         },
+         {
+            "id":78,
+            "role":3,
+            "years":"5",
+            "period":"Meses",
+            "description":"Desarrollo de procesos automatizados de cobranza e integración de Salesforce con plataformas telefónicas como Génesys y U-Contact, utilizando API REST y Lightning Out.\n\nPlanificación y ejecución de la transferencia de conocimientos técnicos al equipo de IT de Coppel, asegurando la continuidad y escalabilidad del proyecto.",
+            "client":"Coppel",
+            "startDate":"2021-03-29T00:00:00.000Z",
+            "endDate":"2021-08-29T00:00:00.000Z"
+         }
+      ],
+      "academicDegrees":[
+         {
+            "id":55,
+            "degree":"Ing en Computación ",
+            "institution":"Uni - Nicaragua ",
+            "startDate":"2010-02-01T00:00:00.000Z",
+            "endDate":"2015-12-24T00:00:00.000Z",
+            "level":"Universitario (Grado)",
+            "status":"Completado"
+         }
+      ],
+      "languages":[
+         {
+            "id":77,
+            "languageId":2,
+            "languageName":"Español",
+            "writtenLanguageLevelId":14,
+            "spokenLanguageLevelId":14,
+            "writtenLevelName":"Nativo",
+            "spokenLevelName":"Nativo"
+         },
+         {
+            "id":78,
+            "languageId":1,
+            "languageName":"Inglés",
+            "writtenLanguageLevelId":12,
+            "spokenLanguageLevelId":11,
+            "writtenLevelName":"Intermedio",
+            "spokenLevelName":"Básico"
+         }
+      ]
+   }
+}

@@ -24,6 +24,8 @@ export interface EmployeeDTO {
   rolesPerformed?: string[] | string
   certifications?: EmployeeCertificationDTO[]
   clouds?: EmployeeCloudDTO[]
+  techSkills?: EmployeeSkillDTO[]
+  softSkills?: EmployeeSkillDTO[]
   description?: string
   allergies?: string
   preExistingIllnesses?: string
@@ -76,6 +78,8 @@ export interface EmployeeFormModel {
   rolesPerformed: string[]
   certifications: EmployeeCertificationFormModel[]
   clouds: EmployeeCloudFormModel[]
+  techSkills: EmployeeSkillFormModel[]
+  softSkills: EmployeeSkillFormModel[]
   description: string
   allergies: string
   preExistingIllnesses: string
@@ -110,4 +114,22 @@ export interface EmployeeCloudDTO {
   issuerName?: string
   cloudId?: string
   cloudName?: string
+}
+
+export interface EmployeeSkillDTO {
+  id?: string | number
+  skill?: string
+  skillId?: string
+  skillName?: string
+  level?: string
+  levelId?: string
+  levelName?: string
+}
+
+export interface EmployeeSkillFormModel {
+  id?: string | number
+  skillId: string
+  skillName: string
+  levelId: string
+  levelName: string
 }

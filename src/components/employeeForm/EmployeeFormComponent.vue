@@ -65,6 +65,26 @@
         :issuers="issuers"
         @valid-change="(value) => handleValidChange(2, value)"
       />
+      <EmployeeStepSkills
+        v-else-if="currentStep === 3"
+        ref="techSkillsStepRef"
+        v-model="formModel"
+        :skill-catalog="technicalSkillsCatalog"
+        :level-catalog="levelCatalog"
+        title="Habilidades Tecnicas"
+        skill-key="techSkills"
+        @valid-change="(value) => handleValidChange(3, value)"
+      />
+      <EmployeeStepSkills
+        v-else-if="currentStep === 4"
+        ref="softSkillsStepRef"
+        v-model="formModel"
+        :skill-catalog="softSkillsCatalog"
+        :level-catalog="levelCatalog"
+        title="Habilidades Blandas"
+        skill-key="softSkills"
+        @valid-change="(value) => handleValidChange(4, value)"
+      />
     </div>
 
     <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -115,6 +135,7 @@ import { mapDtoToForm, mapFormToPayload } from '@/utils/employeeMapper'
 import EmployeeStepPersonal from '@/components/employeeForm/steps/EmployeeStepPersonal.vue'
 import EmployeeStepCertifications from '@/components/employeeForm/steps/EmployeeStepCertifications.vue'
 import EmployeeStepClouds from '@/components/employeeForm/steps/EmployeeStepClouds.vue'
+import EmployeeStepSkills from '@/components/employeeForm/steps/EmployeeStepSkills.vue'
 import api from '@/services/authServices'
 
 type CountryOption = { Id: string; CountryName: string }
@@ -138,12 +159,17 @@ const steps = [
   { title: 'Informacion Personal' },
   { title: 'Certificaciones' },
   { title: 'Nubes' },
+  { title: 'Habilidades Tecnicas' },
+  { title: 'Habilidades Blandas' },
 ]
 
 const countries = ref<CountryOption[]>([])
 const rolesList = ref<RoleOption[]>([])
 const catalogCertificationOptions = ref<CertificationOption[]>([])
 const issuers = ref<IssuerOption[]>([])
+const technicalSkillsCatalog = ref<Array<{ Id: string; SkillName: string }>>([])
+const softSkillsCatalog = ref<Array<{ Id: string; SkillName: string }>>([])
+const levelCatalog = ref<Array<{ Id: string; Name: string }>>([])
 const isCatalogLoading = ref(false)
 
 const formModel = reactive<EmployeeFormModel>({
@@ -172,6 +198,8 @@ const formModel = reactive<EmployeeFormModel>({
   rolesPerformed: [],
   certifications: [],
   clouds: [],
+  techSkills: [],
+  softSkills: [],
   description: '',
   allergies: '',
   preExistingIllnesses: '',
@@ -189,6 +217,8 @@ const stepValidStates = ref(steps.map(() => true))
 const personalStepRef = ref<{ validate: (showErrors?: boolean) => boolean } | null>(null)
 const certificationsStepRef = ref<{ validate: (showErrors?: boolean) => boolean } | null>(null)
 const cloudsStepRef = ref<{ validate: (showErrors?: boolean) => boolean } | null>(null)
+const techSkillsStepRef = ref<{ validate: (showErrors?: boolean) => boolean } | null>(null)
+const softSkillsStepRef = ref<{ validate: (showErrors?: boolean) => boolean } | null>(null)
 
 const isLastStep = computed(() => currentStep.value === steps.length - 1)
 const isCurrentStepValid = computed(
@@ -208,6 +238,8 @@ const getStepValidator = () => {
   if (currentStep.value === 0) return personalStepRef.value?.validate
   if (currentStep.value === 1) return certificationsStepRef.value?.validate
   if (currentStep.value === 2) return cloudsStepRef.value?.validate
+  if (currentStep.value === 3) return techSkillsStepRef.value?.validate
+  if (currentStep.value === 4) return softSkillsStepRef.value?.validate
   return undefined
 }
 
@@ -244,6 +276,8 @@ const loadCatalogs = async () => {
     rolesList.value = catalogs.roles ?? []
     issuers.value = catalogs.issuers ?? []
     const rawCertifications = catalogs.certifications ?? catalogs.certificationOptions ?? []
+    const skills = catalogs.skills ?? []
+    const genericCatalogs = catalogs.genericCatalogs ?? []
     catalogCertificationOptions.value = rawCertifications
       .map((certification: Record<string, any>) => ({
         Id: certification.Id ?? certification.id ?? '',
@@ -255,6 +289,15 @@ const loadCatalogs = async () => {
           '',
       }))
       .filter((certification: CertificationOption) => certification.Id && certification.Issuer)
+    technicalSkillsCatalog.value = skills.filter(
+      (skill: Record<string, any>) => skill.SkillType === 'Technical'
+    )
+    softSkillsCatalog.value = skills.filter(
+      (skill: Record<string, any>) => skill.SkillType === 'Soft'
+    )
+    levelCatalog.value = genericCatalogs.filter(
+      (catalog: Record<string, any>) => catalog.CatalogType === 'SkillPercentage'
+    )
   } catch (error) {
     console.error('Error al cargar catalogos:', error)
   } finally {
