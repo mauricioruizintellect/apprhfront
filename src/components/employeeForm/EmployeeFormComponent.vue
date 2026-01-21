@@ -58,6 +58,13 @@
         :issuers="issuers"
         @valid-change="(value) => handleValidChange(1, value)"
       />
+      <EmployeeStepClouds
+        v-else-if="currentStep === 2"
+        ref="cloudsStepRef"
+        v-model="formModel"
+        :issuers="issuers"
+        @valid-change="(value) => handleValidChange(2, value)"
+      />
     </div>
 
     <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -107,6 +114,7 @@ import type { EmployeeDTO, EmployeeFormModel } from '@/types/employee'
 import { mapDtoToForm, mapFormToPayload } from '@/utils/employeeMapper'
 import EmployeeStepPersonal from '@/components/employeeForm/steps/EmployeeStepPersonal.vue'
 import EmployeeStepCertifications from '@/components/employeeForm/steps/EmployeeStepCertifications.vue'
+import EmployeeStepClouds from '@/components/employeeForm/steps/EmployeeStepClouds.vue'
 import api from '@/services/authServices'
 
 type CountryOption = { Id: string; CountryName: string }
@@ -126,7 +134,11 @@ const emit = defineEmits<{
   (event: 'step-change', stepIndex: number): void
 }>()
 
-const steps = [{ title: 'Informacion Personal' }, { title: 'Certificaciones' }]
+const steps = [
+  { title: 'Informacion Personal' },
+  { title: 'Certificaciones' },
+  { title: 'Nubes' },
+]
 
 const countries = ref<CountryOption[]>([])
 const rolesList = ref<RoleOption[]>([])
@@ -159,6 +171,7 @@ const formModel = reactive<EmployeeFormModel>({
   salesforceExperienceYears: '',
   rolesPerformed: [],
   certifications: [],
+  clouds: [],
   description: '',
   allergies: '',
   preExistingIllnesses: '',
@@ -175,6 +188,7 @@ const currentStep = ref(0)
 const stepValidStates = ref(steps.map(() => true))
 const personalStepRef = ref<{ validate: (showErrors?: boolean) => boolean } | null>(null)
 const certificationsStepRef = ref<{ validate: (showErrors?: boolean) => boolean } | null>(null)
+const cloudsStepRef = ref<{ validate: (showErrors?: boolean) => boolean } | null>(null)
 
 const isLastStep = computed(() => currentStep.value === steps.length - 1)
 const isCurrentStepValid = computed(
@@ -190,10 +204,16 @@ const handleValidChange = (stepIndex: number, value: boolean) => {
   stepValidStates.value[stepIndex] = value
 }
 
+const getStepValidator = () => {
+  if (currentStep.value === 0) return personalStepRef.value?.validate
+  if (currentStep.value === 1) return certificationsStepRef.value?.validate
+  if (currentStep.value === 2) return cloudsStepRef.value?.validate
+  return undefined
+}
+
 const goNext = () => {
-  const isValid = currentStep.value === 0
-    ? personalStepRef.value?.validate()
-    : certificationsStepRef.value?.validate()
+  const validate = getStepValidator()
+  const isValid = validate ? validate() : true
   if (!isValid) return
   currentStep.value += 1
   emit('step-change', currentStep.value)
@@ -206,9 +226,8 @@ const goBack = () => {
 }
 
 const handleSubmit = () => {
-  const isValid = currentStep.value === 0
-    ? personalStepRef.value?.validate()
-    : certificationsStepRef.value?.validate()
+  const validate = getStepValidator()
+  const isValid = validate ? validate() : true
   if (!isValid) return
   const payload = mapFormToPayload(formModel, props.mode)
   emit('submit', payload)

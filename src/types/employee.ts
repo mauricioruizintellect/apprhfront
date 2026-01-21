@@ -23,6 +23,7 @@ export interface EmployeeDTO {
   salesforceExperienceYears?: number | string
   rolesPerformed?: string[] | string
   certifications?: EmployeeCertificationDTO[]
+  clouds?: EmployeeCloudDTO[]
   description?: string
   allergies?: string
   preExistingIllnesses?: string
@@ -74,6 +75,7 @@ export interface EmployeeFormModel {
   salesforceExperienceYears: string
   rolesPerformed: string[]
   certifications: EmployeeCertificationFormModel[]
+  clouds: EmployeeCloudFormModel[]
   description: string
   allergies: string
   preExistingIllnesses: string
@@ -91,4 +93,21 @@ export interface EmployeeCertificationFormModel {
   issuer?: string
   certId?: string
   name?: string
+}
+
+export interface EmployeeCloudFormModel {
+  id?: string | number
+  issuerId: string
+  issuerName: string
+  cloudId: string
+  cloudName: string
+}
+
+export interface EmployeeCloudDTO {
+  id?: string | number
+  issuerId?: string
+  issuer?: string
+  issuerName?: string
+  cloudId?: string
+  cloudName?: string
 }

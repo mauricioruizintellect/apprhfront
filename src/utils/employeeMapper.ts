@@ -1,6 +1,8 @@
 import type {
   EmployeeCertificationDTO,
   EmployeeCertificationFormModel,
+  EmployeeCloudDTO,
+  EmployeeCloudFormModel,
   EmployeeDTO,
   EmployeeFormModel,
 } from '@/types/employee'
@@ -37,6 +39,16 @@ const mapCertificationDto = (
   }
 }
 
+const mapCloudDto = (cloud: EmployeeCloudDTO): EmployeeCloudFormModel => {
+  return {
+    id: cloud.id,
+    issuerId: cloud.issuerId || cloud.issuer || cloud.issuerName || '',
+    issuerName: cloud.issuerName || cloud.issuer || '',
+    cloudId: cloud.cloudId || '',
+    cloudName: cloud.cloudName || '',
+  }
+}
+
 export const mapDtoToForm = (dto: EmployeeDTO): EmployeeFormModel => {
   return {
     id: dto.id ?? dto.EmployeeId,
@@ -65,6 +77,7 @@ export const mapDtoToForm = (dto: EmployeeDTO): EmployeeFormModel => {
     certifications: Array.isArray(dto.certifications)
       ? dto.certifications.map(mapCertificationDto)
       : [],
+    clouds: Array.isArray(dto.clouds) ? dto.clouds.map(mapCloudDto) : [],
     description: dto.description || '',
     allergies: dto.allergies || '',
     preExistingIllnesses: dto.preExistingIllnesses || '',
@@ -111,6 +124,13 @@ export const mapFormToPayload = (form: EmployeeFormModel, mode: 'create' | 'edit
       obtainedAt: certification.obtainedAt,
       expiresAt: certification.expiresAt,
       link: certification.link,
+    })),
+    clouds: form.clouds.map((cloud) => ({
+      id: cloud.id,
+      issuerId: cloud.issuerId,
+      issuerName: cloud.issuerName,
+      cloudId: cloud.cloudId,
+      cloudName: cloud.cloudName,
     })),
     description: form.description.trim(),
     allergies: form.allergies.trim(),
