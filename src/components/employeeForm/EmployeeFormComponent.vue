@@ -44,7 +44,8 @@
       <EmployeeStepPersonal
         v-else-if="currentStep === 0"
         ref="personalStepRef"
-        v-model="formModel"
+        :model-value="formModel"
+        @update:modelValue="(value) => Object.assign(formModel, value)"
         :mode="mode"
         :countries="countries"
         :roles-list="rolesList"
@@ -53,7 +54,8 @@
       <EmployeeStepCertifications
         v-else-if="currentStep === 1"
         ref="certificationsStepRef"
-        v-model="formModel"
+        :model-value="formModel"
+        @update:modelValue="(value) => Object.assign(formModel, value)"
         :certification-options="resolvedCertificationOptions"
         :issuers="issuers"
         @valid-change="(value) => handleValidChange(1, value)"
@@ -61,14 +63,16 @@
       <EmployeeStepClouds
         v-else-if="currentStep === 2"
         ref="cloudsStepRef"
-        v-model="formModel"
+        :model-value="formModel"
+        @update:modelValue="(value) => Object.assign(formModel, value)"
         :issuers="issuers"
         @valid-change="(value) => handleValidChange(2, value)"
       />
       <EmployeeStepSkills
         v-else-if="currentStep === 3"
         ref="techSkillsStepRef"
-        v-model="formModel"
+        :model-value="formModel"
+        @update:modelValue="(value) => Object.assign(formModel, value)"
         :skill-catalog="technicalSkillsCatalog"
         :level-catalog="levelCatalog"
         title="Habilidades Tecnicas"
@@ -78,20 +82,23 @@
       <EmployeeStepWorkExperience
         v-else-if="currentStep === 4"
         ref="workExperienceStepRef"
-        v-model="formModel"
+        :model-value="formModel"
+        @update:modelValue="(value) => Object.assign(formModel, value)"
         :roles-list="rolesList"
         @valid-change="(value) => handleValidChange(4, value)"
       />
       <EmployeeStepAcademicDegrees
         v-else-if="currentStep === 5"
         ref="academicDegreesStepRef"
-        v-model="formModel"
+        :model-value="formModel"
+        @update:modelValue="(value) => Object.assign(formModel, value)"
         @valid-change="(value) => handleValidChange(5, value)"
       />
       <EmployeeStepLanguages
         v-else-if="currentStep === 6"
         ref="languagesStepRef"
-        v-model="formModel"
+        :model-value="formModel"
+        @update:modelValue="(value) => Object.assign(formModel, value)"
         :language-list="languageList"
         :level-options="languageLevelOptions"
         @valid-change="(value) => handleValidChange(6, value)"
@@ -99,7 +106,8 @@
       <EmployeeStepSkills
         v-else-if="currentStep === 7"
         ref="softSkillsStepRef"
-        v-model="formModel"
+        :model-value="formModel"
+        @update:modelValue="(value) => Object.assign(formModel, value)"
         :skill-catalog="softSkillsCatalog"
         :level-catalog="levelCatalog"
         title="Habilidades Blandas"
