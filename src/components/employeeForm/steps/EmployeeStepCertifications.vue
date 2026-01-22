@@ -137,7 +137,12 @@ import type { EmployeeFormModel } from '@/types/employee'
 import Modal from '@/components/ui/Modal.vue'
 import api from '@/services/authServices'
 
-type CertificationOption = { Id: string; IssuerId: string; CertificationName: string }
+type CertificationOption = {
+  Id: string
+  IssuerId: string
+  IssuerName?: string
+  CertificationName: string
+}
 type IssuerOption = { Id: string; IssuerName: string; IssuerType?: string }
 
 const props = defineProps<{
@@ -174,10 +179,11 @@ const issuerOptions = computed(() => {
 
   const uniqueIssuers = new Map<string, IssuerOption>()
   ;(props.certificationOptions ?? []).forEach((option) => {
-    if (option.Issuer) {
-      uniqueIssuers.set(option.Issuer, {
-        Id: option.Issuer,
-        IssuerName: option.Issuer,
+    const issuerId = option.IssuerId || option.IssuerName
+    if (issuerId) {
+      uniqueIssuers.set(issuerId, {
+        Id: issuerId,
+        IssuerName: option.IssuerName || issuerId,
       })
     }
   })
@@ -234,7 +240,7 @@ const addCertification = () => {
   formModel.value.certifications.push({
     certId: String(selectedCert.Id),
     name: selectedCert.CertificationName,
-    issuer: issuerName
+    issuer: issuerName,
   })
 
   closeModal()

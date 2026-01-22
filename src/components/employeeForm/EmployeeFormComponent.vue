@@ -164,7 +164,12 @@ import api from '@/services/authServices'
 
 type CountryOption = { Id: string; CountryName: string }
 type RoleOption = { Id: string; RoleName: string }
-type CertificationOption = { Id: string; Issuer: string; CertName: string }
+type CertificationOption = {
+  Id: string
+  IssuerId: string
+  IssuerName?: string
+  CertificationName: string
+}
 type IssuerOption = { Id: string; IssuerName: string; IssuerType?: string }
 
 const props = defineProps<{
@@ -364,14 +369,31 @@ const loadCatalogs = async () => {
     catalogCertificationOptions.value = rawCertifications
       .map((certification: Record<string, any>) => ({
         Id: certification.Id ?? certification.id ?? '',
-        Issuer: certification.Issuer ?? certification.IssuerName ?? certification.issuer ?? '',
-        CertName:
+        IssuerId:
+          certification.IssuerId ??
+          certification.issuerId ??
+          certification.Issuer ??
+          certification.issuer ??
+          certification.IssuerName ??
+          certification.issuerName ??
+          '',
+        IssuerName:
+          certification.IssuerName ??
+          certification.issuerName ??
+          certification.Issuer ??
+          certification.issuer ??
+          '',
+        CertificationName:
           certification.CertName ??
           certification.CertificationName ??
           certification.certName ??
+          certification.name ??
           '',
       }))
-      .filter((certification: CertificationOption) => certification.Id && certification.Issuer)
+      .filter(
+        (certification: CertificationOption) =>
+          certification.Id && certification.IssuerId
+      )
     technicalSkillsCatalog.value = skills.filter(
       (skill: Record<string, any>) => skill.SkillType === 'Technical'
     )
@@ -403,9 +425,11 @@ watch(
       Object.assign(formModel, mapDtoToForm(value))
       const dtoAny = value as {
         experience?: Array<Record<string, any>>
+        academicDegrees?: Array<Record<string, any>>
+        languages?: Array<Record<string, any>>
       }
       formModel.experience = Array.isArray(dtoAny.experience)
-        ? dtoAny.experience.map((exp) => ({
+        ? dtoAny.experience.map((exp: Record<string, any>) => ({
             id: exp.id,
             role: exp.role ?? '',
             years: exp.years ?? '',
@@ -417,7 +441,7 @@ watch(
           }))
         : []
       formModel.academicDegrees = Array.isArray(dtoAny.academicDegrees)
-        ? dtoAny.academicDegrees.map((degree) => ({
+        ? dtoAny.academicDegrees.map((degree: Record<string, any>) => ({
             id: degree.id,
             degree: degree.degree ?? '',
             institution: degree.institution ?? '',
@@ -428,7 +452,7 @@ watch(
           }))
         : []
       formModel.languages = Array.isArray(dtoAny.languages)
-        ? dtoAny.languages.map((lang) => ({
+        ? dtoAny.languages.map((lang: Record<string, any>) => ({
             id: lang.id,
             languageId: lang.languageId ?? '',
             languageName: lang.languageName ?? '',

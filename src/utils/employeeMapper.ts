@@ -131,13 +131,9 @@ export const mapFormToPayload = (form: EmployeeFormModel, mode: 'create' | 'edit
     rolesPerformed: form.rolesPerformed,
     certifications: form.certifications.map((certification) => ({
       id: certification.id,
-      issuerId: certification.issuerId,
-      issuerName: certification.issuerName,
+      issuer: certification.issuer,
       certId: certification.certId,
-      certName: certification.certName,
-      obtainedAt: certification.obtainedAt,
-      expiresAt: certification.expiresAt,
-      link: certification.link,
+      name: certification.name,
     })),
     clouds: form.clouds.map((cloud) => ({
       id: cloud.id,

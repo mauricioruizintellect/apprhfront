@@ -133,6 +133,10 @@ import { computed, ref, watch } from 'vue'
 import Modal from '@/components/ui/Modal.vue'
 import api from '@/services/authServices'
 
+const emit = defineEmits<{
+  (event: 'saved'): void
+}>()
+
 const isOpen = ref(false)
 const loading = ref(false)
 const errorMessage = ref('')
@@ -286,6 +290,3 @@ defineExpose({
   openModal,
 })
 </script>
-const emit = defineEmits<{
-  (event: 'saved'): void
-}>()
